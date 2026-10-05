@@ -18,6 +18,8 @@
 
 html {
   scroll-behavior: auto;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 html.lenis,
@@ -38,7 +40,9 @@ body {
   color: var(--text-dark);
   background: #0f0f0f;
   overflow-x: hidden;
+  width: 100%;
   padding-bottom: 46px;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
@@ -96,4 +100,10 @@ ul {
 
 .social-icons-btn svg {
   display: block;
+}
+
+@media (max-width: 640px) {
+  body {
+    padding-bottom: 38px;
+  }
 }

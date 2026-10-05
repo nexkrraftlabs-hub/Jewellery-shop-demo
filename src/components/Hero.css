@@ -4,6 +4,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding-top: 86px;
   padding-bottom: 24px;
 }
 
@@ -12,8 +13,8 @@
   inset: 0;
   overflow: hidden;
   z-index: 0;
+  pointer-events: none;
 }
-
 
 .hero-circle {
   position: absolute;
@@ -49,7 +50,8 @@
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
-  padding-top: 24px;
+  flex-direction: column;
+  padding-top: 20px;
 }
 
 .hero-pills {
@@ -73,6 +75,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
   transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -104,7 +107,7 @@
 }
 
 .hero-text h1 {
-  font-size: clamp(3.2rem, 4.6vw + 1.2rem, 4.6rem);
+  font-size: clamp(3rem, 4.4vw + 1rem, 4.6rem);
   line-height: 1.08;
   margin-bottom: 22px;
 }
@@ -140,6 +143,9 @@
   font-weight: 600;
   font-size: 0.85rem;
   letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.25s ease, filter 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -200,8 +206,8 @@
 
 .hero-visual {
   position: relative;
-  width: clamp(280px, 29vw, 480px);
-  max-height: 66vh;
+  width: clamp(260px, 28vw, 440px);
+  max-height: 64vh;
   aspect-ratio: 445 / 870;
 }
 
@@ -240,21 +246,11 @@
   translate: -50% -50%;
   height: 100%;
   width: auto;
-  /* Override the global img{max-width:100%} - it would clamp this image's
-     width to the (much narrower) arch container and, since height is
-     fixed, squash it out of its natural aspect ratio. The bottle layer has
-     overflow:visible specifically so it can render at its true proportions. */
   max-width: none;
   will-change: transform, opacity;
   filter: drop-shadow(0 26px 30px rgba(0, 0, 0, 0.4));
-  /* Source photos include the bottle's mirrored floor reflection below the
-     glass base (~84% down the frame) - crop it off so only the bottle shows. */
   -webkit-clip-path: inset(0 0 15% 0);
   clip-path: inset(0 0 15% 0);
-  /* `translate` handles centering above; `transform` is free for this idle
-     bob so the two compose instead of fighting over one property - and it
-     stays clear of the GSAP fly transform, which animates the parent
-     .hero-bottle-fly wrapper, not this image. */
   animation: bottle-float 4.5s ease-in-out infinite;
 }
 
@@ -293,6 +289,7 @@
   gap: 4px;
   text-align: center;
   padding: 6px;
+  flex-shrink: 0;
 }
 
 .hero-badge span {
@@ -326,14 +323,37 @@
   }
 }
 
-@media (max-width: 860px), (max-height: 620px) {
+@media (max-width: 860px) {
   .hero {
     min-height: auto;
-    padding-bottom: 24px;
+    padding-top: 78px;
+    padding-bottom: 32px;
   }
 
   .hero-main {
-    padding-top: 88px;
+    padding-top: 10px;
+  }
+
+  .hero-pills {
+    position: static;
+    top: auto;
+    right: auto;
+    translate: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 0 auto 20px;
+    padding: 0 16px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero-pill {
+    height: 34px;
+    padding: 0 14px;
+    font-size: 0.65rem;
   }
 
   .hero-body {
@@ -341,37 +361,165 @@
     align-items: center;
     text-align: center;
     padding: 0 24px;
+    gap: 36px;
   }
 
   .hero-text {
     max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-text h1 {
+    font-size: clamp(2.4rem, 7.5vw, 3.8rem);
+    line-height: 1.1;
+    margin-bottom: 16px;
   }
 
   .hero-text p {
+    font-size: 0.98rem;
+    line-height: 1.6;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 24px;
+    max-width: 480px;
   }
 
   .hero-actions {
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
-  .hero-pills {
-    top: 4px;
-    right: 50%;
-    translate: 50% 0;
+  .btn {
+    padding: 13px 26px;
+    font-size: 0.82rem;
+  }
+
+  .hero-nav {
+    justify-content: center;
+    margin-top: 24px;
   }
 
   .hero-right {
-    margin-top: 24px;
+    margin-top: 10px;
     flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
   }
 
   .hero-visual {
-    width: clamp(240px, 60vw, 340px);
+    width: clamp(200px, 48vw, 300px);
+    max-height: 50vh;
   }
 
   .hero-badges {
     flex-direction: row;
+    justify-content: center;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding-top: 66px;
+    padding-bottom: 28px;
+  }
+
+  .hero-pills {
+    gap: 6px;
+    margin-bottom: 16px;
+    padding: 0 10px;
+  }
+
+  .hero-pill {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 0.62rem;
+  }
+
+  .hero-body {
+    padding: 0 16px;
+    gap: 26px;
+  }
+
+  .hero-text h1 {
+    font-size: clamp(2rem, 9.2vw, 2.7rem);
+    line-height: 1.12;
+    margin-bottom: 14px;
+  }
+
+  .hero-title-leaf {
+    width: 16px;
+    height: 16px;
+    top: -10px;
+    right: -4px;
+  }
+
+  .hero-text p {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    margin-bottom: 20px;
+    padding: 0 4px;
+  }
+
+  .hero-actions {
+    gap: 10px;
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 125px;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 0.78rem;
+  }
+
+  .hero-nav {
+    margin-top: 18px;
+    gap: 12px;
+  }
+
+  .hero-arrow {
+    width: 38px;
+    height: 38px;
+  }
+
+  .hero-right {
+    gap: 16px;
+  }
+
+  .hero-visual {
+    width: clamp(180px, 60vw, 240px);
+    max-height: 44vh;
+  }
+
+  .hero-badges {
+    gap: 12px;
+  }
+
+  .hero-badge {
+    width: 78px;
+    height: 78px;
+    padding: 4px;
+  }
+
+  .hero-badge span {
+    font-size: 0.54rem;
+  }
+
+  .hero-circle--left {
+    width: 82vw;
+    height: 82vw;
+    left: -20vw;
+  }
+
+  .hero-circle--right {
+    width: 70vw;
+    height: 70vw;
+    right: -15vw;
   }
 }

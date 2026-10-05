@@ -9,6 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
 
 .bestsellers-top h2 {
@@ -23,6 +24,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
   transition: gap 0.25s ease;
 }
 
@@ -66,8 +68,6 @@
 .bs-card-img {
   height: 170px;
   width: auto;
-  /* Override the global img{max-width:100%} so the bottle keeps its true
-     aspect ratio and can bleed above the card's own top edge. */
   max-width: none;
   -webkit-clip-path: inset(0 0 15% 0);
   clip-path: inset(0 0 15% 0);
@@ -109,19 +109,82 @@
   transform: translateY(-2px);
 }
 
-@media (max-width: 720px) {
-  .bestsellers {
-    padding: 70px 20px 80px;
-  }
-
+@media (max-width: 1024px) {
   .bestsellers-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 75px 24px;
+    max-width: 720px;
   }
 }
 
-@media (max-width: 460px) {
+@media (max-width: 768px) {
+  .bestsellers {
+    padding: 60px 20px 80px;
+  }
+
+  .bestsellers-top {
+    margin-bottom: 75px;
+  }
+
+  .bestsellers-top h2 {
+    font-size: 2rem;
+  }
+
   .bestsellers-grid {
     grid-template-columns: 1fr;
     max-width: 320px;
+    margin: 0 auto;
+    gap: 72px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bestsellers {
+    padding: 50px 16px 70px;
+  }
+
+  .bestsellers-top {
+    margin-bottom: 70px;
+  }
+
+  .bestsellers-top h2 {
+    font-size: 1.75rem;
+  }
+
+  .bestsellers-viewall {
+    font-size: 0.8rem;
+  }
+
+  .bestsellers-grid {
+    grid-template-columns: 1fr;
+    max-width: 300px;
+    gap: 70px 16px;
+  }
+
+  .bs-card {
+    padding: 108px 16px 28px;
+    border-radius: 24px;
+  }
+
+  .bs-card-media {
+    top: -65px;
+  }
+
+  .bs-card-img {
+    height: 160px;
+  }
+
+  .bs-card-price {
+    font-size: 1.35rem;
+  }
+
+  .bs-card-name {
+    margin-bottom: 20px;
+    font-size: 0.88rem;
+  }
+
+  .bs-card-add {
+    padding: 10px 26px;
+    font-size: 0.7rem;
   }
 }

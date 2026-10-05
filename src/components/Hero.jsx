@@ -42,20 +42,25 @@ const Hero = () => {
 
     let ctx
     let cancelled = false
-    // Wait for the crossfade to settle and web fonts to finish loading
-    // before measuring rects - a late font swap reflows the Best Sellers
-    // section's text and throws off the landing spot.
-    const ready = Promise.all([
-      new Promise((resolve) => setTimeout(resolve, 650)),
-      document.fonts?.ready ?? Promise.resolve(),
-    ])
 
-    ready.then(() => {
+    const initAnimation = () => {
       if (cancelled) return
+      ctx?.revert()
+
       ctx = gsap.context(() => {
+        const srcBottle = flyEl.querySelector('.hero-bottle-img')
+        if (!srcBottle) return
+
         const dstRect = cardImg.getBoundingClientRect()
-        const srcRect = flyEl.querySelector('.hero-bottle-img').getBoundingClientRect()
+        const srcRect = srcBottle.getBoundingClientRect()
         const flyElRect = flyEl.getBoundingClientRect()
+
+        // Wait if images haven't measured any size yet
+        if (!dstRect.width || !srcRect.width) {
+          setTimeout(initAnimation, 120)
+          return
+        }
+
         const srcCx = srcRect.left + srcRect.width / 2
         const srcCy = srcRect.top + srcRect.height / 2
         const dstCx = dstRect.left + dstRect.width / 2
@@ -63,6 +68,14 @@ const Hero = () => {
         const wCx = flyElRect.left + flyElRect.width / 2
         const wCy = flyElRect.top + flyElRect.height / 2
         const scale = dstRect.width / srcRect.width
+
+        const isMobile = window.innerWidth <= 860
+        const visualEl = flyEl.closest('.hero-visual')
+
+        // On mobile, trigger when the bottle is in clear view so it lifts off in front of the user
+        const startTrigger = isMobile && visualEl ? visualEl : heroRef.current
+        const startPos = isMobile ? 'top 65%' : 'top top'
+        const endPos = isMobile ? 'top 120px' : 'top 140px'
 
         gsap.set(flyEl, { zIndex: 300, opacity: 1 })
 
@@ -75,35 +88,82 @@ const Hero = () => {
           scale,
           ease: 'none',
           scrollTrigger: {
-            trigger: heroRef.current,
-            start: 'top top',
+            trigger: startTrigger,
+            start: startPos,
             endTrigger: card,
-            end: 'top 140px',
+            end: endPos,
             scrub: true,
-            // Hero has no z-index of its own (so Categories' floating card
-            // can overlap its bottom edge at rest) - but that same low
-            // stacking traps the flying bottle underneath Categories mid-
-            // transit. Lift Hero above it only while actually scrubbing
-            // through the fly range, and drop it back once at either end.
+            invalidateOnRefresh: true,
             onUpdate: (self) => {
-              heroRef.current.style.zIndex = self.progress > 0 && self.progress < 1 ? 25 : ''
+              if (self.progress > 0 && self.progress < 1) {
+                heroRef.current.style.zIndex = '900'
+                flyEl.style.zIndex = '950'
+                flyEl.style.opacity = '1'
+              } else if (self.progress <= 0) {
+                heroRef.current.style.zIndex = ''
+                flyEl.style.zIndex = '300'
+              }
             },
             onLeave: () => {
               cardImg.style.opacity = '1'
               flyEl.style.opacity = '0'
               heroRef.current.style.zIndex = ''
+              flyEl.style.zIndex = ''
             },
             onEnterBack: () => {
               cardImg.style.opacity = '0'
               flyEl.style.opacity = '1'
+              heroRef.current.style.zIndex = '900'
+              flyEl.style.zIndex = '950'
+            },
+            onLeaveBack: () => {
+              cardImg.style.opacity = '0'
+              flyEl.style.opacity = '1'
+              heroRef.current.style.zIndex = ''
+              flyEl.style.zIndex = '300'
             },
           },
         })
       }, heroRef)
+    }
+
+    const waitImage = (img) => {
+      if (!img || (img.complete && img.naturalWidth > 0)) return Promise.resolve()
+      return new Promise((resolve) => {
+        img.addEventListener('load', resolve, { once: true })
+        img.addEventListener('error', resolve, { once: true })
+        setTimeout(resolve, 800)
+      })
+    }
+
+    const heroBottleImg = flyEl.querySelector('.hero-bottle-img')
+    const loaderExists = document.querySelector('.loader') !== null
+    const delay = loaderExists ? 2150 : 350
+
+    Promise.all([
+      new Promise((resolve) => setTimeout(resolve, delay)),
+      waitImage(cardImg),
+      waitImage(heroBottleImg),
+      document.fonts?.ready ?? Promise.resolve(),
+    ]).then(() => {
+      if (cancelled) return
+      initAnimation()
+      ScrollTrigger.refresh()
     })
+
+    const handleLoaderDone = () => {
+      setTimeout(() => {
+        if (!cancelled) {
+          initAnimation()
+          ScrollTrigger.refresh()
+        }
+      }, 100)
+    }
+    window.addEventListener('loader-done', handleLoaderDone)
 
     return () => {
       cancelled = true
+      window.removeEventListener('loader-done', handleLoaderDone)
       ctx?.revert()
       cardImg.style.opacity = ''
       flyEl.style.opacity = ''

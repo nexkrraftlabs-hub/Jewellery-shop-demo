@@ -61,3 +61,20 @@
     animation: none;
   }
 }
+
+@media (max-width: 640px) {
+  .offer-marquee {
+    height: 38px;
+  }
+
+  .offer-item {
+    font-size: 0.72rem;
+    gap: 12px;
+    padding: 0 12px;
+    letter-spacing: 0.04em;
+  }
+
+  .offer-dot {
+    font-size: 0.6rem;
+  }
+}

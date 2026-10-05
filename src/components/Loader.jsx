@@ -10,6 +10,7 @@ const Loader = () => {
     const doneTimer = setTimeout(() => {
       setPhase('done')
       document.body.style.overflow = ''
+      window.dispatchEvent(new CustomEvent('loader-done'))
     }, 2050)
     return () => {
       clearTimeout(exitTimer)
